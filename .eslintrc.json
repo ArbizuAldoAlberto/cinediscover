@@ -1,0 +1,17 @@
+{
+    "extends": [
+        "expo",
+        "prettier"
+    ],
+    "plugins": [
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+        "no-console": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "no-unused-vars": "error",
+        "@typescript-eslint/no-explicit-any": "warn"
+    }
+}

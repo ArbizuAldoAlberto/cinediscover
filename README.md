@@ -1,0 +1,1 @@
+  GET  www.movieapi/categories
