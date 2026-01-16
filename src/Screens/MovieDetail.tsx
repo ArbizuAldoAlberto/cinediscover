@@ -12,13 +12,18 @@ import {
 import { theme } from "../Global/theme";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store/store';
 
 export default function MovieDetail({ route, navigation }: any) {
     const { movie } = route.params as { movie: Movie };
     const { height, width } = useWindowDimensions();
 
+    // Get current user ID from auth state
+    const userId = useSelector((state: RootState) => state.auth.user?.uid);
+
     // Mutation and Query for Favorites
-    const { data: favorites = [] } = useGetFavoritesQuery();
+    const { data: favorites = [] } = useGetFavoritesQuery(userId);
     const [addFavorite] = useAddFavoritesMutation();
     const [removeFavorite] = useDeleteFavoritesMutation();
 
@@ -28,9 +33,9 @@ export default function MovieDetail({ route, navigation }: any) {
     const handleBack = () => navigation.goBack();
     const handleToggleFavorite = async () => {
         if (isFavorite && favoriteId) {
-            await removeFavorite(favoriteId);
+            await removeFavorite({ id: favoriteId, userId });
         } else {
-            await addFavorite(movie);
+            await addFavorite({ movie, userId });
         }
     };
 

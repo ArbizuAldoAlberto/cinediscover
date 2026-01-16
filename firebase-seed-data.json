@@ -1,0 +1,96 @@
+{
+    "categories": {
+        "cat1": {
+            "name": "Action"
+        },
+        "cat2": {
+            "name": "Sci-Fi"
+        },
+        "cat3": {
+            "name": "Drama"
+        },
+        "cat4": {
+            "name": "Thriller"
+        },
+        "cat5": {
+            "name": "Comedy"
+        },
+        "cat6": {
+            "name": "Horror"
+        }
+    },
+    "movies": {
+        "mov1": {
+            "title": "Dune: Part Two",
+            "category": "Sci-Fi",
+            "poster": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
+            "description": "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the universe, he must prevent a terrible future only he can foresee."
+        },
+        "mov2": {
+            "title": "Oppenheimer",
+            "category": "Drama",
+            "poster": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop",
+            "description": "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II."
+        },
+        "mov3": {
+            "title": "John Wick: Chapter 4",
+            "category": "Action",
+            "poster": "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop",
+            "description": "John Wick uncovers a path to defeating The High Table. But before he can earn his freedom, Wick must face off against a new enemy with powerful alliances across the globe."
+        },
+        "mov4": {
+            "title": "The Batman",
+            "category": "Action",
+            "poster": "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=600&fit=crop",
+            "description": "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement."
+        },
+        "mov5": {
+            "title": "Inception",
+            "category": "Sci-Fi",
+            "poster": "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop",
+            "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
+        },
+        "mov6": {
+            "title": "Interstellar",
+            "category": "Sci-Fi",
+            "poster": "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=600&fit=crop",
+            "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
+        },
+        "mov7": {
+            "title": "The Shawshank Redemption",
+            "category": "Drama",
+            "poster": "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop",
+            "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+        },
+        "mov8": {
+            "title": "The Dark Knight",
+            "category": "Action",
+            "poster": "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop",
+            "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice."
+        },
+        "mov9": {
+            "title": "Pulp Fiction",
+            "category": "Thriller",
+            "poster": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop",
+            "description": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption."
+        },
+        "mov10": {
+            "title": "The Matrix",
+            "category": "Sci-Fi",
+            "poster": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop",
+            "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+        },
+        "mov11": {
+            "title": "Parasite",
+            "category": "Thriller",
+            "poster": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
+            "description": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan."
+        },
+        "mov12": {
+            "title": "Get Out",
+            "category": "Horror",
+            "poster": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop",
+            "description": "A young African-American visits his white girlfriend's parents for the weekend, where his simmering uneasiness about their reception of him eventually reaches a boiling point."
+        }
+    }
+}

@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import {
     View, Text, TextInput, TouchableOpacity, StyleSheet,
     KeyboardAvoidingView, Platform, ScrollView, ImageBackground,
-    StatusBar, ActivityIndicator
+    StatusBar, ActivityIndicator, Alert
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { theme } from '../Global/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDispatch } from 'react-redux';
+import { loginUser, registerUser } from '../Services/authService';
+import { setUser, setError } from '../Features/auth/authSlice';
 
 const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -17,14 +20,27 @@ const LoginSchema = Yup.object().shape({
 
 export default function Login({ navigation }: any) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isRegisterMode, setIsRegisterMode] = useState(false);
+    const dispatch = useDispatch();
 
-    const handleLogin = (values: any) => {
+    const handleAuth = async (values: any) => {
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false);
+        try {
+            const user = isRegisterMode
+                ? await registerUser(values.email, values.password)
+                : await loginUser(values.email, values.password);
+
+            dispatch(setUser(user));
             navigation.navigate("Home");
-        }, 1500);
+        } catch (error: any) {
+            dispatch(setError(error.message));
+            Alert.alert(
+                isRegisterMode ? 'Registration Failed' : 'Login Failed',
+                error.message
+            );
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

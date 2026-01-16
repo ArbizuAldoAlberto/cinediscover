@@ -1,11 +1,15 @@
 /**
  * @file firebaseConfig.ts
- * @description Firebase configuration using environment variables for security
+ * @description Firebase configuration and initialization
  * @security All sensitive credentials are stored in .env (not committed to Git)
  */
 
+import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+
 // Read from environment variables (Expo uses EXPO_PUBLIC_ prefix for client-side vars)
-export const firebaseConfig = {
+const firebaseConfig = {
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "",
     authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
     databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL || "",
@@ -22,6 +26,12 @@ if (!firebaseConfig.apiKey) {
     );
 }
 
-// In a real app, you would initialize Firebase here:
-// import { initializeApp } from 'firebase/app';
-// export const app = initializeApp(firebaseConfig);
+// Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+
+// Initialize services
+export const database = getDatabase(app);
+export const auth = getAuth(app);
+
+// Export config for reference
+export { firebaseConfig };

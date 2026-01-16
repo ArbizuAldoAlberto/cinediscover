@@ -6,10 +6,13 @@ import {
 import { theme } from "../Global/theme";
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store/store';
 
 export default function Favorites({ navigation }: any) {
     const { width } = useWindowDimensions();
-    const { data: favorites = [], isLoading } = useGetFavoritesQuery();
+    const userId = useSelector((state: RootState) => state.auth.user?.uid);
+    const { data: favorites = [], isLoading } = useGetFavoritesQuery(userId);
     const [removeFavorite] = useDeleteFavoritesMutation();
     const [activeTab, setActiveTab] = useState('To Watch');
 
@@ -68,7 +71,7 @@ export default function Favorites({ navigation }: any) {
             </View>
             <TouchableOpacity
                 style={styles.removeBtn}
-                onPress={() => removeFavorite(item.id)}
+                onPress={() => removeFavorite({ id: item.id, userId })}
             >
                 <Ionicons name="close-outline" size={22} color="#94A3B8" />
             </TouchableOpacity>

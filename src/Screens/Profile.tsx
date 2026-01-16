@@ -1,11 +1,43 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, useWindowDimensions, Alert } from 'react-native';
 import { theme } from '../Global/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDispatch, useSelector } from 'react-redux';
+import { signOut } from '../Services/authService';
+import { logout } from '../Features/auth/authSlice';
+import { RootState } from '../Store/store';
 
 export default function Profile({ navigation }: any) {
     const { width } = useWindowDimensions();
+    const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.auth.user);
+
+    const handleLogout = async () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to log out?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await signOut();
+                            dispatch(logout());
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            });
+                        } catch (error: any) {
+                            Alert.alert('Error', error.message);
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
     const stats = [
         { label: 'WATCHED', value: '124' },
@@ -54,8 +86,8 @@ export default function Profile({ navigation }: any) {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.userName}>Alex Sterling</Text>
-                    <Text style={styles.userEmail}>alex.s@cinema.io</Text>
+                    <Text style={styles.userName}>{user?.displayName || 'CineDiscover User'}</Text>
+                    <Text style={styles.userEmail}>{user?.email || 'user@cinediscover.com'}</Text>
 
                     <View style={styles.proBadge}>
                         <Ionicons name="shield-checkmark" size={14} color={theme.colors.primary} />
@@ -109,7 +141,8 @@ export default function Profile({ navigation }: any) {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.logoutBtn}>
+                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                    <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
                     <Text style={styles.logoutText}>Log Out</Text>
                 </TouchableOpacity>
 
@@ -298,8 +331,14 @@ const styles = StyleSheet.create({
     },
     logoutBtn: {
         marginTop: 10,
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 12,
+        justifyContent: 'center',
+        paddingVertical: 16,
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(239, 68, 68, 0.3)',
     },
     logoutText: {
         color: '#EF4444',

@@ -37,24 +37,23 @@ export const movieApi = createApi({
                 return Object.keys(response).map(key => ({ id: key, ...response[key] }));
             }
         }),
-        getFavorites: build.query<Movie[], void>({
-            query: () => 'favorites.json',
+        getFavorites: build.query<Movie[], string | undefined>({
+            query: (userId) => userId ? `users/${userId}/favorites.json` : 'favorites.json',
             providesTags: ['Favorites'],
             transformResponse: (response: any) => {
                 if (!response) return [];
                 return Object.keys(response).map(key => ({ id: key, ...response[key] }));
             }
         }),
-        addFavorites: build.mutation<void, Movie>({
-            query: (newMovie) => ({
-                url: 'favorites.json',
+        addFavorites: build.mutation<void, { movie: Movie; userId?: string }>({
+            query: ({ movie, userId }) => ({
+                url: userId ? `users/${userId}/favorites.json` : 'favorites.json',
                 method: 'POST',
-                body: newMovie,
+                body: movie,
             }),
-            // AGENT 2: Optimistic Update
-            async onQueryStarted(movie, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ movie, userId }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(
-                    movieApi.util.updateQueryData('getFavorites', undefined, (draft) => {
+                    movieApi.util.updateQueryData('getFavorites', userId, (draft) => {
                         draft.push(movie);
                     })
                 );
@@ -66,15 +65,14 @@ export const movieApi = createApi({
             },
             invalidatesTags: ['Favorites'],
         }),
-        deleteFavorites: build.mutation<void, string>({
-            query: (id) => ({
-                url: `favorites/${id}.json`,
+        deleteFavorites: build.mutation<void, { id: string; userId?: string }>({
+            query: ({ id, userId }) => ({
+                url: userId ? `users/${userId}/favorites/${id}.json` : `favorites/${id}.json`,
                 method: 'DELETE',
             }),
-            // AGENT 2: Optimistic Update
-            async onQueryStarted(id, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ id, userId }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(
-                    movieApi.util.updateQueryData('getFavorites', undefined, (draft) => {
+                    movieApi.util.updateQueryData('getFavorites', userId, (draft) => {
                         return draft.filter((m) => m.id !== id);
                     })
                 );
