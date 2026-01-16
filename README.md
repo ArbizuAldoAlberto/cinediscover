@@ -1,13 +1,13 @@
-# 🎬 cInediscober 
+# 🎬 cinediscover 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Expo](https://img.shields.io/badge/Expo-54.0.25-000020?style=flat&logo=expo&logoColor=white)](https://expo.dev/)
 [![React Native](https://img.shields.io/badge/React_Native-0.81.5-61DAFB?style=flat&logo=react&logoColor=black)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-**cInediscober** is a premium movie exploration application built with React Native and Expo. Featuring a high-fidelity cinematic UI based on the "Stitch Explorer" design system, it delivers a flagship-level user experience for modern movie enthusiasts.
+**cinediscover** is a premium movie exploration application built with React Native and Expo. Featuring a high-fidelity cinematic UI based on the "Stitch Explorer" design system, it delivers a flagship-level user experience for modern movie enthusiasts.
 
-![Home Screen](https://raw.githubusercontent.com/ArbizuAldoAlberto/cInediscober/fase-1/screenshots/home_preview.png)
+![Home Screen](https://raw.githubusercontent.com/ArbizuAldoAlberto/cinediscover/fase-1/screenshots/home_preview.png)
 
 ## ✨ Features
 
@@ -39,8 +39,8 @@
 ### Steps
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ArbizuAldoAlberto/cInediscober.git
-   cd cInediscober
+   git clone https://github.com/ArbizuAldoAlberto/cinediscover.git
+   cd cinediscover
    ```
 
 2. **Install dependencies**
