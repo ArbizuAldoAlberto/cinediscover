@@ -87,4 +87,3 @@ Email: [arbizualdoalberto@gmail.com]
 GitHub: [@ArbizuAldoAlberto](https://github.com/ArbizuAldoAlberto)
 
 ---
-*Created as part of the Advanced Mobile Development Blueprint 2026.*
