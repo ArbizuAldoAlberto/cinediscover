@@ -87,4 +87,7 @@ Email: [arbizualdoalberto@gmail.com]
 GitHub: [@ArbizuAldoAlberto](https://github.com/ArbizuAldoAlberto)
 
 ---
+<<<<<<< HEAD
 
+=======
+>>>>>>> b35fc503eb976dc1342cd28dd877bcdaed479e0e
