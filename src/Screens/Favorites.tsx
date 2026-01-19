@@ -1,4 +1,4 @@
-import { useGetFavoritesQuery, useDeleteFavoritesMutation, Movie } from '../Services/movieService';
+import { useGetFavoritesQuery, useDeleteFavoritesMutation, useGetWatchedQuery, Movie } from '../Services/movieService';
 import {
     View, Text, FlatList, StyleSheet, useWindowDimensions,
     ActivityIndicator, TouchableOpacity, Image, StatusBar
@@ -12,9 +12,13 @@ import { RootState } from '../Store/store';
 export default function Favorites({ navigation }: any) {
     const { width } = useWindowDimensions();
     const userId = useSelector((state: RootState) => state.auth.user?.uid);
-    const { data: favorites = [], isLoading } = useGetFavoritesQuery(userId);
+    const { data: favorites = [], isLoading: favLoading } = useGetFavoritesQuery(userId, { skip: !userId });
+    const { data: watchedList = [], isLoading: watchedLoading } = useGetWatchedQuery(userId, { skip: !userId });
+
     const [removeFavorite] = useDeleteFavoritesMutation();
     const [activeTab, setActiveTab] = useState('To Watch');
+
+    const isLoading = favLoading || watchedLoading;
 
     if (isLoading) {
         return (
@@ -81,10 +85,18 @@ export default function Favorites({ navigation }: any) {
     const renderEmpty = () => (
         <View style={styles.emptyContainer}>
             <View style={styles.emptyIconCircle}>
-                <Ionicons name="bookmarks-outline" size={40} color={theme.colors.primary} />
+                <Ionicons
+                    name={activeTab === 'To Watch' ? "bookmarks-outline" : "checkmark-circle-outline"}
+                    size={40}
+                    color={theme.colors.primary}
+                />
             </View>
-            <Text style={styles.emptyTitle}>Your Library is Empty</Text>
-            <Text style={styles.emptySubtitle}>Start saving movies you want to watch later and they'll show up here.</Text>
+            <Text style={styles.emptyTitle}>{activeTab === 'To Watch' ? 'To Watch List Empty' : 'No Watched Movies'}</Text>
+            <Text style={styles.emptySubtitle}>
+                {activeTab === 'To Watch'
+                    ? "Start saving movies you want to watch later and they'll show up here."
+                    : "Movies you mark as watched will appear in this section."}
+            </Text>
             <TouchableOpacity style={styles.discoverBtn} onPress={() => navigation.navigate("Home")}>
                 <Text style={styles.discoverBtnText}>Explore Movies</Text>
             </TouchableOpacity>
@@ -98,11 +110,11 @@ export default function Favorites({ navigation }: any) {
             {renderHeader()}
 
             <FlatList
-                data={favorites}
+                data={activeTab === 'To Watch' ? favorites : watchedList}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
                 ListEmptyComponent={renderEmpty}
-                contentContainerStyle={[styles.listContent, favorites.length === 0 && { flex: 1 }]}
+                contentContainerStyle={[styles.listContent, (activeTab === 'To Watch' ? favorites : watchedList).length === 0 && { flex: 1 }]}
                 showsVerticalScrollIndicator={false}
             />
 

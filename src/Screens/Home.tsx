@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View, Text, StyleSheet, ScrollView, Image,
-    TouchableOpacity, StatusBar, useWindowDimensions, ImageBackground, ActivityIndicator
+    TouchableOpacity, StatusBar, useWindowDimensions, ImageBackground, ActivityIndicator,
+    Modal, Alert
 } from 'react-native';
-import { useGetMoviesQuery, useGetCategoriesQuery, Movie } from '../Services/movieService';
+import { useGetMoviesQuery, useGetCategoriesQuery, useGetWatchedQuery, Movie } from '../Services/movieService';
 import { theme } from '../Global/theme';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store/store';
+
 export default function Home({ navigation }: any) {
     const { width } = useWindowDimensions();
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    const user = useSelector((state: RootState) => state.auth.user);
+    const userId = user?.uid;
+
     const { data: movies, isLoading: moviesLoading } = useGetMoviesQuery();
     const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery();
+    const { data: watchedMovies } = useGetWatchedQuery(userId, { skip: !userId });
 
     if (moviesLoading || categoriesLoading) {
         return (
@@ -24,26 +34,70 @@ export default function Home({ navigation }: any) {
     const featuredMovie = movies?.[0];
     const trendingMovies = movies?.slice(1, 5) || [];
     const newReleases = movies?.slice(5, 8) || [];
+    const personalizedMovies = movies?.slice(2, 6) || [];
+
+    const handleNotificationPress = () => {
+        setShowNotifications(true);
+    };
 
     return (
         <View style={styles.mainContainer}>
             <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+
+            {/* Notification Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showNotifications}
+                onRequestClose={() => setShowNotifications(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.notificationPanel}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Notifications</Text>
+                            <TouchableOpacity onPress={() => setShowNotifications(false)}>
+                                <Ionicons name="close" size={24} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                        <ScrollView style={styles.notificationList}>
+                            <View style={styles.notificationItem}>
+                                <View style={styles.notifIcon}>
+                                    <Ionicons name="star" size={18} color={theme.colors.primary} />
+                                </View>
+                                <View style={styles.notifText}>
+                                    <Text style={styles.notifTitle}>New Release!</Text>
+                                    <Text style={styles.notifDesc}>'Inception' is now available in 4K UHD.</Text>
+                                </View>
+                            </View>
+                            <View style={styles.notificationItem}>
+                                <View style={styles.notifIcon}>
+                                    <Ionicons name="gift-outline" size={18} color="#FFD700" />
+                                </View>
+                                <View style={styles.notifText}>
+                                    <Text style={styles.notifTitle}>Reward Unlocked</Text>
+                                    <Text style={styles.notifDesc}>You've marked 5 movies as watched this month!</Text>
+                                </View>
+                            </View>
+                        </ScrollView>
+                    </View>
+                </View>
+            </Modal>
 
             {/* Top Navigation Bar */}
             <View style={styles.header}>
                 <View style={styles.userInfo}>
                     <View style={styles.avatarBorder}>
                         <Image
-                            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB8aFzf9PgD04VONRCpKqyQeDfOCt0Gy88XCpX9vXPA9mgJK-P0oSLsw3vHJdrusMmzqKRcbG0s1Eci0ZPMxBJjEwXdSElYBgCNnm9xo-xjPpcPPXl_JOgySWFW4tFMWZxkT-uoJBsZReVSjISGkTcp23kSkkNecGXGPPt5Ta8DoTECnjFMG4TF_cP1L8hm9O_n42J8qqP9whkhvzMZ-5-cCBU-TbfR5sNrR4iqE_Wu-uQaseQEv9K53GJAPiloOpaVxh9pUPMr_RY' }}
+                            source={{ uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100' }}
                             style={styles.avatar}
                         />
                     </View>
                     <View>
-                        <Text style={styles.headerTitle}>Home Explorer</Text>
-                        <Text style={styles.headerSubtitle}>PREMIUM MEMBER</Text>
+                        <Text style={styles.headerTitle}>Welcome, {user?.displayName || 'Explorer'}</Text>
+                        <Text style={styles.headerSubtitle}>{user ? 'PLATINUM MEMBER' : 'GUEST'}</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.notificationBtn}>
+                <TouchableOpacity style={styles.notificationBtn} onPress={handleNotificationPress}>
                     <Ionicons name="notifications-outline" size={24} color="white" />
                     <View style={styles.notificationDot} />
                 </TouchableOpacity>
@@ -51,32 +105,32 @@ export default function Home({ navigation }: any) {
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-                {/* Hero Featured Movie (4/5 Aspect Ratio) */}
+                {/* Hero Featured Movie */}
                 <View style={styles.heroSection}>
                     <TouchableOpacity
                         activeOpacity={0.9}
                         onPress={() => featuredMovie && navigation.navigate("Detail", { movie: featuredMovie })}
                     >
                         <ImageBackground
-                            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDoEo-rxis1b4OHCHtt1K9AEn5VRlNwM68A9-_VCPh98a-VF67Ddp2tf5WYjm9a0YBc7d-Boo9M9J4UCgFwrCDTSwtgdmLTUQU5ByyOmv9jeHH6s84odkpXrVHVk-dktXQvX4Un_ctxQ_4KC_hkHDsslo-7fc-nfOscPZeFA3sEwDmZ6icFBGqL59HW7PHBGWpOp2pWLKfcNKTtMfnNecGIZkeI9UFgXPTHOVISULIHdzl5lIRNdT-p8KEnto2H3qnVSVmmGgQqoU' }}
-                            style={[styles.heroImage, { height: width * 1.25 }]}
+                            source={{ uri: featuredMovie?.poster || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1080' }}
+                            style={[styles.heroImage, { height: width * 1.35 }]}
                         >
                             <LinearGradient
-                                colors={['transparent', 'rgba(18, 18, 18, 0.4)', 'rgba(18, 18, 18, 0.8)', '#121212']}
+                                colors={['transparent', 'rgba(18, 18, 18, 0.2)', 'rgba(18, 18, 18, 0.8)', '#121212']}
                                 style={styles.heroGradient}
                             >
                                 <View style={styles.heroBadgeRow}>
                                     <View style={styles.featuredBadge}>
-                                        <Text style={styles.featuredBadgeText}>FEATURED</Text>
-                                    </View>
-                                    <View style={styles.metaBadge}>
-                                        <Text style={styles.metaBadgeText}>Sci-Fi • 2h 46m</Text>
+                                        <Text style={styles.featuredBadgeText}>EXCLUSIVE PREMIERE</Text>
                                     </View>
                                 </View>
-                                <Text style={styles.heroTitle}>Dune:{'\n'}Part Two</Text>
+                                <Text style={styles.heroTitle}>{featuredMovie?.title || 'Featured Film'}</Text>
 
                                 <View style={styles.heroActions}>
-                                    <TouchableOpacity style={styles.playBtn}>
+                                    <TouchableOpacity
+                                        style={styles.playBtn}
+                                        onPress={() => navigation.navigate("Detail", { movie: featuredMovie })}
+                                    >
                                         <Ionicons name="play" size={20} color="black" />
                                         <Text style={styles.playBtnText}>Watch Now</Text>
                                     </TouchableOpacity>
@@ -89,9 +143,32 @@ export default function Home({ navigation }: any) {
                     </TouchableOpacity>
                 </View>
 
+                {/* Watched / Continue Watching Section (Logged In) */}
+                {watchedMovies && watchedMovies.length > 0 && (
+                    <View>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Continue Watching</Text>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingScroll}>
+                            {watchedMovies.map((movie: Movie) => (
+                                <TouchableOpacity
+                                    key={movie.id}
+                                    style={styles.watchedCard}
+                                    onPress={() => navigation.navigate("Detail", { movie })}
+                                >
+                                    <Image source={{ uri: movie.poster }} style={styles.watchedPoster} />
+                                    <View style={styles.progressBarBg}>
+                                        <View style={[styles.progressBarFill, { width: '45%' }]} />
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+
                 {/* Trending Now */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Trending Now</Text>
+                    <Text style={styles.sectionTitle}>Trending Worldwide</Text>
                     <TouchableOpacity onPress={() => navigation.navigate("Movies")}>
                         <Text style={styles.seeAll}>See All</Text>
                     </TouchableOpacity>
@@ -107,14 +184,40 @@ export default function Home({ navigation }: any) {
                             <View style={styles.trendingPosterWrapper}>
                                 <Image source={{ uri: movie.poster }} style={styles.trendingPoster} />
                                 <View style={styles.ratingBadge}>
-                                    <Text style={styles.ratingText}>{8.4 - (idx * 0.2)}</Text>
+                                    <Ionicons name="star" size={10} color={theme.colors.primary} />
+                                    <Text style={styles.ratingText}>{8.8 - (idx * 0.2)}</Text>
                                 </View>
                             </View>
                             <Text style={styles.cardTitle} numberOfLines={1}>{movie.title}</Text>
-                            <Text style={styles.cardSubtitle}>2023 • {movie.category}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+
+                {/* Personalized Section */}
+                {user && (
+                    <View>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Recommended for {user.displayName?.split(' ')[0] || 'You'}</Text>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trendingScroll}>
+                            {personalizedMovies.map((movie: Movie) => (
+                                <TouchableOpacity
+                                    key={movie.id}
+                                    style={styles.personalizedCard}
+                                    onPress={() => navigation.navigate("Detail", { movie })}
+                                >
+                                    <Image source={{ uri: movie.poster }} style={styles.personalizedPoster} />
+                                    <LinearGradient
+                                        colors={['transparent', 'rgba(0,0,0,0.8)']}
+                                        style={styles.personalizedGradient}
+                                    >
+                                        <Text style={styles.personalizedTitle} numberOfLines={1}>{movie.title}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
 
                 {/* Popular Genres Bento Grid */}
                 <View style={styles.sectionHeader}>
@@ -473,5 +576,111 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         flex: 1,
+    },
+    // New Styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        justifyContent: 'flex-end'
+    },
+    notificationPanel: {
+        backgroundColor: '#1A1A1A',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        height: '70%',
+        padding: 24,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    modalTitle: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    notificationList: {
+        flex: 1,
+    },
+    notificationItem: {
+        flexDirection: 'row',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 12,
+        alignItems: 'center',
+    },
+    notifIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(0, 214, 164, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    notifText: {
+        flex: 1,
+    },
+    notifTitle: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    notifDesc: {
+        color: '#94A3B8',
+        fontSize: 14,
+        marginTop: 2,
+    },
+    watchedCard: {
+        width: 200,
+        height: 110,
+        borderRadius: 16,
+        overflow: 'hidden',
+        backgroundColor: '#1A1A1A',
+    },
+    watchedPoster: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.6,
+    },
+    progressBarBg: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 4,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: theme.colors.primary,
+    },
+    personalizedCard: {
+        width: 140,
+        height: 200,
+        borderRadius: 20,
+        overflow: 'hidden',
+        backgroundColor: '#1A1A1A',
+    },
+    personalizedPoster: {
+        width: '100%',
+        height: '100%',
+    },
+    personalizedGradient: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 80,
+        justifyContent: 'flex-end',
+        padding: 12,
+    },
+    personalizedTitle: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
     }
 });

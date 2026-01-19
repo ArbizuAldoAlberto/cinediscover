@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Provider, useDispatch } from "react-redux";
-import { store, persistor } from "./src/Store/store";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { store, persistor, RootState } from "./src/Store/store";
 import { NavigationContainer } from "@react-navigation/native";
 import { PersistGate } from 'redux-persist/integration/react';
-import TabNavigator from "./src/Navigation/TabNavigator";
+import StackNavigator from "./src/Navigation/StackNavigator"; // Use the Root Stack
 import { theme } from './src/Global/theme';
 import { StatusBar } from 'expo-status-bar';
 import { initDatabase } from './src/Services/database';
@@ -20,6 +20,7 @@ function AuthListener() {
     useEffect(() => {
         const unsubscribe = onAuthChange((user) => {
             dispatch(setUser(user));
+            // Navigation logic could go here, but usually handled in Login/Profile
         });
         return () => unsubscribe();
     }, [dispatch]);
@@ -49,7 +50,7 @@ export default function App(): JSX.Element {
                 <AuthListener />
                 <NavigationContainer ref={navigationRef}>
                     <StatusBar style="light" backgroundColor={theme.colors.background} />
-                    <TabNavigator />
+                    <StackNavigator />
                 </NavigationContainer>
             </PersistGate>
         </Provider>

@@ -7,11 +7,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from '../Services/authService';
 import { logout } from '../Features/auth/authSlice';
 import { RootState } from '../Store/store';
+import { useGetFavoritesQuery } from '../Services/movieService';
 
 export default function Profile({ navigation }: any) {
     const { width } = useWindowDimensions();
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
+
+    // Get real stats
+    const { data: favorites = [] } = useGetFavoritesQuery(user?.uid, { skip: !user?.uid });
+    const watchlistCount = favorites.length;
 
     const handleLogout = async () => {
         Alert.alert(
@@ -39,14 +44,30 @@ export default function Profile({ navigation }: any) {
         );
     };
 
+    const handleFeature = (featureName: string) => {
+        Alert.alert(
+            featureName,
+            `This feature is coming soon in the next update! Stay tuned.`,
+            [{ text: 'OK', style: 'default' }]
+        );
+    };
+
+    const handleEditProfile = () => {
+        Alert.alert('Edit Profile', 'Profile editing will be available soon.');
+    };
+
     const stats = [
-        { label: 'WATCHED', value: '124' },
-        { label: 'WATCHLIST', value: '48' },
-        { label: 'REVIEWS', value: '12' },
+        { label: 'WATCHED', value: '12' }, // Placeholder for now
+        { label: 'WATCHLIST', value: watchlistCount.toString() },
+        { label: 'REVIEWS', value: '5' }, // Placeholder for now
     ];
 
-    const MenuOption = ({ icon, title, subtitle, showBorder = true }: any) => (
-        <TouchableOpacity style={[styles.menuItem, showBorder && styles.menuBorder]}>
+    const MenuOption = ({ icon, title, subtitle, showBorder = true, onPress }: any) => (
+        <TouchableOpacity
+            style={[styles.menuItem, showBorder && styles.menuBorder]}
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
             <View style={styles.menuIconContainer}>
                 <Ionicons name={icon} size={22} color={theme.colors.primary} />
             </View>
@@ -67,7 +88,7 @@ export default function Profile({ navigation }: any) {
                     <Ionicons name="chevron-back" size={24} color="white" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Profile</Text>
-                <TouchableOpacity style={styles.headerBtn}>
+                <TouchableOpacity style={styles.headerBtn} onPress={() => handleFeature('Settings')}>
                     <Ionicons name="ellipsis-horizontal" size={24} color="white" />
                 </TouchableOpacity>
             </View>
@@ -81,7 +102,7 @@ export default function Profile({ navigation }: any) {
                             source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB8aFzf9PgD04VONRCpKqyQeDfOCt0Gy88XCpX9vXPA9mgJK-P0oSLsw3vHJdrusMmzqKRcbG0s1Eci0ZPMxBJjEwXdSElYBgCNnm9xo-xjPpcPPXl_JOgySWFW4tFMWZxkT-uoJBsZReVSjISGkTcp23kSkkNecGXGPPt5Ta8DoTECnjFMG4TF_cP1L8hm9O_n42J8qqP9whkhvzMZ-5-cCBU-TbfR5sNrR4iqE_Wu-uQaseQEv9K53GJAPiloOpaVxh9pUPMr_RY' }}
                             style={styles.avatar}
                         />
-                        <TouchableOpacity style={styles.editBtn}>
+                        <TouchableOpacity style={styles.editBtn} onPress={handleEditProfile}>
                             <Ionicons name="pencil" size={16} color="black" />
                         </TouchableOpacity>
                     </View>
@@ -111,12 +132,14 @@ export default function Profile({ navigation }: any) {
                         icon="person-outline"
                         title="Account Settings"
                         subtitle="Security, password & email"
+                        onPress={() => handleFeature('Account Settings')}
                     />
                     <MenuOption
                         icon="card-outline"
                         title="Subscription Plan"
                         subtitle="Manage your monthly billing"
                         showBorder={false}
+                        onPress={() => handleFeature('Subscription')}
                     />
                 </View>
 
@@ -127,17 +150,20 @@ export default function Profile({ navigation }: any) {
                         icon="options-outline"
                         title="App Preferences"
                         subtitle="Notifications & player settings"
+                        onPress={() => handleFeature('Preferences')}
                     />
                     <MenuOption
                         icon="cloud-download-outline"
                         title="Downloads"
                         subtitle="Quality and storage management"
+                        onPress={() => handleFeature('Downloads')}
                     />
                     <MenuOption
                         icon="help-circle-outline"
                         title="Help Center"
                         subtitle="FAQs and live support"
                         showBorder={false}
+                        onPress={() => handleFeature('Help Center')}
                     />
                 </View>
 

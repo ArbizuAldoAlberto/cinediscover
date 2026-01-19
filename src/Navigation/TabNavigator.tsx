@@ -1,13 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import StackNavigator from "./StackNavigator";
+import Home from "../Screens/Home";
 import Movies from "../Screens/Movies";
 import Favorites from "../Screens/Favorites";
 import AIScanner from "../Screens/AIScanner";
 import Profile from "../Screens/Profile";
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../Global/theme';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +76,7 @@ export default function TabNavigator() {
         >
             <Tab.Screen
                 name="Home"
-                component={StackNavigator}
+                component={Home}
                 options={{ tabBarLabel: "HOME" }}
             />
             <Tab.Screen

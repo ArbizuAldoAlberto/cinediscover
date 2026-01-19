@@ -31,7 +31,7 @@ export default function Login({ navigation }: any) {
                 : await loginUser(values.email, values.password);
 
             dispatch(setUser(user));
-            navigation.navigate("Home");
+            navigation.navigate("MainTabs");
         } catch (error: any) {
             dispatch(setError(error.message));
             Alert.alert(
@@ -70,7 +70,7 @@ export default function Login({ navigation }: any) {
                             <Formik
                                 initialValues={{ email: '', password: '' }}
                                 validationSchema={LoginSchema}
-                                onSubmit={handleLogin}
+                                onSubmit={handleAuth}
                             >
                                 {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                                     <View style={styles.formCard}>
@@ -95,9 +95,11 @@ export default function Login({ navigation }: any) {
                                         <View style={styles.inputGroup}>
                                             <View style={styles.labelRow}>
                                                 <Text style={styles.label}>Password</Text>
-                                                <TouchableOpacity>
-                                                    <Text style={styles.forgotText}>Forgot password?</Text>
-                                                </TouchableOpacity>
+                                                {!isRegisterMode && (
+                                                    <TouchableOpacity>
+                                                        <Text style={styles.forgotText}>Forgot password?</Text>
+                                                    </TouchableOpacity>
+                                                )}
                                             </View>
                                             <View style={[styles.inputWrapper, touched.password && errors.password && styles.inputError]}>
                                                 <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textSecondary} />
@@ -122,7 +124,12 @@ export default function Login({ navigation }: any) {
                                             {isLoading ? (
                                                 <ActivityIndicator color="black" />
                                             ) : (
-                                                <Text style={styles.loginButtonText}>Sign In</Text>
+                                                <>
+                                                    <Text style={styles.loginButtonText}>
+                                                        {isRegisterMode ? 'Create Account' : 'Sign In'}
+                                                    </Text>
+                                                    <Ionicons name="arrow-forward" size={20} color="black" />
+                                                </>
                                             )}
                                         </TouchableOpacity>
 
@@ -145,9 +152,13 @@ export default function Login({ navigation }: any) {
                             </Formik>
 
                             <View style={styles.footer}>
-                                <Text style={styles.footerText}>New here? </Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.registerText}>Create an account</Text>
+                                <Text style={styles.footerText}>
+                                    {isRegisterMode ? 'Already have an account? ' : "New here? "}
+                                </Text>
+                                <TouchableOpacity onPress={() => setIsRegisterMode(!isRegisterMode)}>
+                                    <Text style={styles.registerText}>
+                                        {isRegisterMode ? 'Sign In' : 'Create an account'}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         </ScrollView>

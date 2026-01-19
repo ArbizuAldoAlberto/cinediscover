@@ -1,10 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../Screens/Home";
-import Movies from "../Screens/Movies";
-import MovieDetail from "../Screens/MovieDetail";
-import Favorites from "../Screens/Favorites";
 import Login from "../Screens/Login";
+import TabNavigator from "./TabNavigator"; // Import TabNavigator
+import MovieDetail from "../Screens/MovieDetail";
 import { theme } from '../Global/theme';
 
 const Stack = createNativeStackNavigator();
@@ -21,21 +19,19 @@ export default function StackNavigator() {
                 name="Login"
                 component={Login}
             />
+            {/* Main Application with Tabs */}
             <Stack.Screen
-                name="HomeScreen"
-                component={Home}
+                name="MainTabs"
+                component={TabNavigator}
             />
-            <Stack.Screen
-                name="MoviesScreen"
-                component={Movies}
-            />
+            {/* Global screens accessible from anywhere */}
             <Stack.Screen
                 name="Detail"
                 component={MovieDetail}
-            />
-            <Stack.Screen
-                name="Favorites"
-                component={Favorites}
+                options={{
+                    presentation: 'card', // Or 'modal' for a cool effect
+                    animation: 'slide_from_right'
+                }}
             />
         </Stack.Navigator>
     );

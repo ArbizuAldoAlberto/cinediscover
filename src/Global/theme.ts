@@ -3,6 +3,8 @@
  * @description Centralized design system following Stitch Home Explorer aesthetics.
  */
 
+import { Platform } from 'react-native';
+
 export const theme = {
     colors: {
         primary: '#00d6a4', // Vibrant neon green
@@ -68,20 +70,26 @@ export const theme = {
         }
     },
     shadows: {
-        light: {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 5,
-        },
-        glow: {
-            shadowColor: "#00d6a4",
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.5,
-            shadowRadius: 15,
-            elevation: 10,
-        }
+        light: Platform.select({
+            web: { boxShadow: '0px 4px 8px rgba(0,0,0,0.3)' },
+            default: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 5,
+            }
+        }),
+        glow: Platform.select({
+            web: { boxShadow: '0px 0px 15px rgba(0, 214, 164, 0.5)' },
+            default: {
+                shadowColor: "#00d6a4",
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 10,
+            }
+        })
     }
 } as const;
 
